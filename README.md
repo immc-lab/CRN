@@ -1,5 +1,5 @@
-# MFSVFND
-code for paper: ['MFSVFND: Multimodal Fusion Network for Detecting Fake News on Short Video Platforms']
+# CRN
+
 ## Environment
 please refer to the file requirements.txt.
 ## Dataset
@@ -15,7 +15,7 @@ FakeTT collect news videos from the TikTok platform, following a similar collect
 ## Train
 After placing the data, start training the model:
 ```python
-python main.py
+python main.py --missing_modality text
 ```
 
 The original dataset can be applied for [FakeSV](https://github.com/ICTMCG/FakeSV) and [FakeTT](https://github.com/ICTMCG/FakingRecipe?tab=readme-ov-file).

@@ -14,24 +14,22 @@ class MFSVFNDDataset(Dataset):
         self.datamode = datamode
 
         if self.dataset == 'fakesv':
-            # 读取 FakeSV 完整标注文件
-            # 注意：fake_sv.json 是标准 JSON（列表），不是 JSON Lines，因此不要使用 lines=True
             self.data_complete = pd.read_json(
-                '/sda/data/caozhiyang/FakeSV/fake_sv_merged.json',
+                'your_path',
                 orient='records',
                 dtype=False,lines=True
             )
             self.data_complete = self.data_complete[self.data_complete['annotation'] != '辟谣']
-            self.maefeapath = '/sda/data/caozhiyang/MFSVFND/data/fea/fakesv/mae_fea'
-            self.hubert_path = '/sda/data/caozhiyang/MFSVFND/data/fea/fakesv/hubert_fea/'
+            self.maefeapath = 'your_path'
+            self.hubert_path = 'your_path'
             # 恢复使用原项目中的相对路径划分文件
             with open('data/FakeSV/data-split/' + path_vid, "r") as fr:
                 for line in fr.readlines():
                     self.vid.append(line.strip())
         else:
-            self.data_complete = pd.read_json('data/FakeTT/fake_tt_merged.json', orient='records', dtype=False, lines=True)
-            self.maefeapath = '/sda/data/caozhiyang/MFSVFND/data/fea/fakett/mae_fea'
-            self.hubert_path = '/sda/data/caozhiyang/MFSVFND/data/fea/fakett/hubert_fea/'
+            self.data_complete = pd.read_json('your_path', orient='records', dtype=False, lines=True)
+            self.maefeapath = 'your_path'
+            self.hubert_path = 'your_path'
             with open('data/FakeTT/data-split/' + path_vid, "r") as fr:
                 for line in fr.readlines():
                     self.vid.append(line.strip())
@@ -67,7 +65,7 @@ class MFSVFNDDataset(Dataset):
             label = 0 if item['annotation'] == 'real' else 1
             # text
             if self.datamode == 'title+ocr':
-                title_tokens = self.tokenizer( item['description']+' '+item['description2']+item['temporal_evolution2'],
+                title_tokens = self.tokenizer( item['description']+' '+item['get_ocr'],
                                               max_length=512, padding='max_length', truncation=True)
             else:
                 title_tokens = self.tokenizer(item['recognize_ocr'] + '' + item['event'], max_length=512,
@@ -84,30 +82,23 @@ class MFSVFNDDataset(Dataset):
         audio_item_path = self.hubert_path + vid + '.pkl'
         try:
             if os.path.exists(audio_item_path):
-                # 我们的提取脚本是用 pickle.dump 存的，这里用 pickle.load 读回，再转成 tensor
+            
                 with open(audio_item_path, 'rb') as f:
                     audio_fea = pickle.load(f)
                 audio_fea = torch.as_tensor(audio_fea, dtype=torch.float)
             else:
-                # 如果音频特征不存在，使用全零占位 (80, 1024)
+                
                 audio_fea = torch.zeros(80, 1024, dtype=torch.float)
         except Exception:
-            # 读取失败时，也使用全零占位（静默处理）
+    
             audio_fea = torch.zeros(80, 1024, dtype=torch.float)
 
         # frames
         file_path = os.path.join(self.maefeapath, vid + '.pkl')
-        try:
-            if os.path.exists(file_path):
-                with open(file_path, 'rb') as f:
-                    frames = pickle.load(f)
-                frames = torch.as_tensor(frames, dtype=torch.float)
-            else:
-                # 如果图像特征不存在，使用全零占位 (86, 1024)
-                frames = torch.zeros(86, 1024, dtype=torch.float)
-        except Exception:
-            # 读取失败时，也使用全零占位（静默处理）
-            frames = torch.zeros(86, 1024, dtype=torch.float)
+        with open(file_path, 'rb') as f:
+            frames = pickle.load(f)
+        frames = torch.as_tensor(frames, dtype=torch.float)
+            
 
         return {
             'label': label,

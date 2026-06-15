@@ -78,7 +78,7 @@ class Trainer():
             # 更新学习率
             p = float(epoch) / 100
             lr = self.lr / (1. + 10 * p) ** 0.75
-            # 创建优化器
+
             self.optimizer = torch.optim.Adam(params=self.model.parameters(), lr=lr)
 
             current_epoch = epoch - self.start_epoch
@@ -90,7 +90,7 @@ class Trainer():
                 ratio_label = self.curriculum_ratios[2]
             print(f'[Reverse Curriculum Learning] Epoch {epoch+1}: using last {int(ratio_label*100)}% training data')
 
-            for phase in ['train', 'test']:
+            for phase in ['train', 'val','test']:
                 if phase == 'train':
                     self.model.train()
                 else:
@@ -106,7 +106,6 @@ class Trainer():
                 num_samples = 0
 
                 if phase == 'train':
-                    # 根据当前 epoch 确定训练比例
                     current_epoch = epoch - self.start_epoch
                     if current_epoch < self.curriculum_epochs[0]:
                         ratio = self.curriculum_ratios[0]
@@ -115,7 +114,6 @@ class Trainer():
                     else:
                         ratio = self.curriculum_ratios[2]
                     
-                    # 每个 epoch 随机采样指定比例的批次
                     all_batches = list(self.dataloaders['train'])
                     num_samples = max(1, int(len(all_batches) * ratio))
                     indices = np.random.choice(len(all_batches), size=num_samples, replace=False)
@@ -168,13 +166,6 @@ class Trainer():
                 self._phase_results[phase]['precision'].append(results['precision'])
                 self._phase_results[phase]['recall'].append(results['recall'])
                 
-                # 保存第17个epoch的模型权重为best_epoch
-                if epoch == 16:  # epoch从0开始，所以第17个epoch对应16
-                    save_dir = "/sda/home/caozhiyang/MVSFND/MFSVFND-main-main/MFSVFND-main-main/check_points/fakesv/"
-                    os.makedirs(save_dir, exist_ok=True)
-                    save_path = os.path.join(save_dir, "best_befor_epoch.pth")
-                    torch.save(self.model.state_dict(), save_path)
-                    print(f"Saved epoch 17 model to {save_path}")
                 
                 if phase == 'val' and results['acc'] > best_acc_val:
                     best_acc_val = results['acc']
