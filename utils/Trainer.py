@@ -116,9 +116,8 @@ class Trainer():
                     
                     all_batches = list(self.dataloaders['train'])
                     num_samples = max(1, int(len(all_batches) * ratio))
-                    indices = np.random.choice(len(all_batches), size=num_samples, replace=False)
-                    data_iter = iter([all_batches[i] for i in indices])
-                    print(f'Using {num_samples}/{len(all_batches)} batches ({ratio*100:.0f}%)')
+                    data_iter = iter(all_batches[:num_samples])
+                    print(f'Using first {num_samples}/{len(all_batches)} batches ({ratio*100:.0f}%)')
                 else:
                     data_iter = iter(self.dataloaders[phase])
 

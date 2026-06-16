@@ -23,7 +23,8 @@ parser.add_argument('--shuffle_seed', type=int, default=None,
 parser.add_argument('--gpu', type=int, default=0)
 parser.add_argument('--lr', type=float, default=0.0001)
 
-parser.add_argument('--lambd', type=float, default=0.02)
+parser.add_argument('--lambd1', type=float, default=1)
+parser.add_argument('--lambd2', type=float, default=10)
 parser.add_argument('--dropout', type=float, default=0.1) 
 parser.add_argument('--weight_decay', type=float, default=5e-5)
 
