@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-from model.MFSVFND import MFSVFNDModel
-from utils.dataloader import MFSVFNDDataset
+from model.CRN import CRNModel
+from utils.dataloader import CRNDataset
 from utils.tools import *
 from utils.Trainer import Trainer
 import numpy as np
@@ -32,9 +32,9 @@ class Run():
             token = pretrain_bert_uncased_token()
             from utils.dataloader import fakett_collate_fn as collate_fn
 
-        dataset_train = MFSVFNDDataset('vid_time3_train.txt', token, self.dataset)
-        dataset_val = MFSVFNDDataset('vid_time3_val.txt', token, self.dataset)
-        dataset_test = MFSVFNDDataset('vid_time3_test.txt', token, self.dataset)
+        dataset_train = CRNDataset('vid_time3_train.txt', token, self.dataset)
+        dataset_val = CRNDataset('vid_time3_val.txt', token, self.dataset)
+        dataset_test = CRNDataset('vid_time3_test.txt', token, self.dataset)
 
         train_dataloader = DataLoader(dataset_train, batch_size=self.batch_size,
             num_workers=self.num_workers,
@@ -59,7 +59,7 @@ class Run():
         return dataloaders
 
     def get_model(self):
-        self.model = MFSVFNDModel(fea_dim=128, dropout=self.dropout, dataset=self.dataset,
+        self.model = CRNModel(fea_dim=128, dropout=self.dropout, dataset=self.dataset,
                                   missing_modality=self.missing_modality)
         return self.model
 

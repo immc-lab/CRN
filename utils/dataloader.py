@@ -6,7 +6,7 @@ from torch.utils.data import Dataset
 import torch
 import numpy as np
 
-class MFSVFNDDataset(Dataset):
+class CRNDataset(Dataset):
     def __init__(self, path_vid, token, dataset, datamode='title+ocr'):
         self.dataset = dataset
         self.vid = []

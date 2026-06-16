@@ -75,7 +75,7 @@ class Trainer():
             print('Epoch {}/{}'.format(epoch+1, self.start_epoch+self.num_epochs))
             print('-' * 50)
 
-            # 更新学习率
+
             p = float(epoch) / 100
             lr = self.lr / (1. + 10 * p) ** 0.75
 
@@ -88,7 +88,7 @@ class Trainer():
                 ratio_label = self.curriculum_ratios[1]
             else:
                 ratio_label = self.curriculum_ratios[2]
-            print(f'[Reverse Curriculum Learning] Epoch {epoch+1}: using last {int(ratio_label*100)}% training data')
+          
 
             for phase in ['train', 'val','test']:
                 if phase == 'train':
@@ -134,7 +134,7 @@ class Trainer():
                     with torch.set_grad_enabled(phase == 'train'):
                         outputs, loss_recon = self.model(**batch_data)
                         _, preds = torch.max(outputs, 1)
-                        loss =0.1* self.criterion(outputs, label) +0.1* self.lambd * loss_recon
+                        loss =lambd1* self.criterion(outputs, label) +lambd2* self.lambd * loss_recon
                         if phase == 'train':
                             self.optimizer.zero_grad()
                             loss.backward()

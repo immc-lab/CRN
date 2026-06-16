@@ -27,9 +27,9 @@ class classifier(nn.Module):
         return out
 
 
-class MFSVFNDModel(torch.nn.Module):
+class CRNModel(torch.nn.Module):
     def __init__(self, fea_dim, dropout, dataset, missing_modality='none'):
-        super(MFSVFNDModel, self).__init__()
+        super(CRNModel, self).__init__()
         VALID = {'none', 't', 'v', 'a', 'tv', 'ta', 'va'}
         if missing_modality not in VALID:
             raise ValueError(f'missing_modality must be one of {VALID}, got {missing_modality}')
