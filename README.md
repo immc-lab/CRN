@@ -1,5 +1,7 @@
 # CRN
 
+![Framework](fig_framework.pdf)
+
 ## Environment
 please refer to the file requirements.txt.
 ## Dataset
